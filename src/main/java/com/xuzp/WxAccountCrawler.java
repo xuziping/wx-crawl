@@ -7,15 +7,14 @@ import cn.edu.hfut.dmic.webcollector.plugin.berkeley.BreadthCrawler;
 import cn.edu.hfut.dmic.webcollector.plugin.nextfilter.HashSetNextFilter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import lombok.extern.slf4j.Slf4j;
+import com.xuzp.common.WxCrawlerConstant;
+import com.xuzp.wxobj.ArticleSummaryObj;
 import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.List;
 
-@Slf4j
 public class WxAccountCrawler extends BreadthCrawler {
 
     protected String historyKeysPath;//历史值存放路径，一个txt文件
@@ -37,9 +36,13 @@ public class WxAccountCrawler extends BreadthCrawler {
 
     @Override
     public void visit(Page page, CrawlDatums next) {
-        String account = page.meta("account");
-
-        if (page.matchType("account_search")) {
+        String account = page.meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (page.matchType(WxCrawlerConstant.CrawlDatumType.ACCOUNT_SEARCH)) {
             //对于账号搜索页面，手动解析，抽取公众号文章列表页URL
             Element accountLinkEle = page.select("p.tit>a").first();
             //防止搜索结果为空
@@ -55,10 +58,10 @@ public class WxAccountCrawler extends BreadthCrawler {
             }
             //解析出公众号搜索结果页面中的URL
             String accountUrl = accountLinkEle.attr("abs:href");
-            //添加到待抓取URL队列中
-            next.add(new CrawlDatum(accountUrl, "article_list").meta("account", account));
+            LOG.info("添加到待抓取URL队列中：{}，类型：{}", accountUrl, WxCrawlerConstant.CrawlDatumType.ARTICLE_LIST);
+            next.add(new CrawlDatum(accountUrl, WxCrawlerConstant.CrawlDatumType.ARTICLE_LIST).meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT, account));
 
-        } else if (page.matchType("article_list")) {
+        } else if (page.matchType(WxCrawlerConstant.CrawlDatumType.ARTICLE_LIST)) {
             //对于公众号文章列表页，只显示最近的10篇文章
             String prefix = "msgList = ";
             String suffix = "seajs.use";
@@ -69,34 +72,39 @@ public class WxAccountCrawler extends BreadthCrawler {
             int len = jsonStr.length();
             //去掉最后一个分号，否则无法解析为jsonobject
             jsonStr = jsonStr.substring(0,len-1);
-            //System.out.println(jsonStr);
-            //将字符串转换为jsonobject
-            JSONObject json = JSONObject.parseObject(jsonStr);
-            JSONArray articleJSONArray = JSONArray.parseArray(json.getString("list"));
-            for (int i = 0; i < articleJSONArray.size(); i++) {
-                JSONObject articleJSON = articleJSONArray.getJSONObject(i).getJSONObject("app_msg_ext_info");
-                String title = articleJSON.getString("title").trim();
-                String key = account + "_" + title;
-                //原来问题在这里！！！replace("&amp;", "&")
-                //这里是文章的临时链接
-                String articleUrl = "http://mp.weixin.qq.com" + articleJSON.getString("content_url").replace("&amp;", "&");
-                //添加到待抓取URL队列中
-                next.add(new CrawlDatum(articleUrl, "article").key(key).meta("account", account));
+
+            try {
+                JSONObject json = JSONObject.parseObject(jsonStr);
+                List<ArticleSummaryObj> articles = JSONArray.parseArray(json.getString("list"), ArticleSummaryObj.class);
+                for (ArticleSummaryObj obj: articles) {
+                    LOG.info("obj:{}", obj);
+                }
+
+                JSONArray articleJSONArray = JSONArray.parseArray(json.getString("list"));
+                for (int i = 0; i < articleJSONArray.size(); i++) {
+                    JSONObject articleJSON = articleJSONArray.getJSONObject(i).getJSONObject("app_msg_ext_info");
+                    String title = articleJSON.getString("title").trim();
+                    String key = account + "_" + title;
+                    String articleUrl = WxCrawlerConstant.URL_PREFIX + articleJSON.getString("content_url").replace("&amp;", "&");
+                    //添加到待抓取URL队列中
+                    next.add(new CrawlDatum(articleUrl, WxCrawlerConstant.CrawlDatumType.ARTICLE_DETAIL).key(key).meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT, account));
+                }
+            } catch(Exception e) {
+                LOG.error("Failed to parse jsonStr");
             }
 
-        } else if (page.matchType("article")) {
+
+
+        } else if (page.matchType(WxCrawlerConstant.CrawlDatumType.ARTICLE_DETAIL)) {
             try {
-                //对于文章详情页，抽取标题、内容等信息
                 String title = page.select("h2.rich_media_title").first().text().trim();
                 //String date = page.select("em#post-date").first().text().trim();
-                String content = page.select("div.rich_media_content").first().text().trim();
-                //适应数据库中content大小
-                content = content.substring(0,255);
+                String content = page.select("div.rich_media_content").first().html().trim();
                 //将页面key写入文件中用来去重
                 writeHistoryKey(page.key());
 
-                log.info("OK title={}", title);
-
+                LOG.info("OK title: {}", title);
+                LOG.info("OK content: {}", content);
                 //持久化到数据库
 //                writeNewstoDB(title,content);
                 //JSONObject articleJSON = new JSONObject();
@@ -146,9 +154,8 @@ public class WxAccountCrawler extends BreadthCrawler {
 
     public void addAccount(String account) throws UnsupportedEncodingException {
         //根据公众号名称设置种子URL
-        String seedUrl = "http://weixin.sogou.com/weixin?type=1&"
-                + "s_from=input&ie=utf8&query=" + URLEncoder.encode(account, "utf-8");
-        CrawlDatum seed = new CrawlDatum(seedUrl, "account_search").meta("account", account);
+        String seedUrl = WxCrawlerConstant.SEARCH_URL + URLEncoder.encode(account, "utf-8");
+        CrawlDatum seed = new CrawlDatum(seedUrl, WxCrawlerConstant.CrawlDatumType.ACCOUNT_SEARCH).meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT, account);
         addSeed(seed);
     }
 
@@ -171,11 +178,8 @@ public class WxAccountCrawler extends BreadthCrawler {
 
     public static void main(String[] args) throws Exception {
         WxAccountCrawler crawler = new WxAccountCrawler("crawl_weixin", "wx_history.txt");
-        crawler.addAccount("西电研究生");
-        crawler.addAccount("西电导航");
-        crawler.addAccount("西电学生会");
-        crawler.addAccount("西电小喇叭");
-        crawler.setThreads(5);
+        crawler.addAccount("横琴人寿");
+        crawler.setThreads(1);
         crawler.start(10);
     }
 }
