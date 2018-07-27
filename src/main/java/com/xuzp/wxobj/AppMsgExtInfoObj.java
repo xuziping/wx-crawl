@@ -17,7 +17,7 @@ public class AppMsgExtInfoObj implements Serializable {
     private String del_flag;
 
     /**
-     * 版权码
+     * 是否原创?
      */
     private String copyright_stat;
 
@@ -37,6 +37,9 @@ public class AppMsgExtInfoObj implements Serializable {
      */
     private String title;
 
+    /**
+     * 文本内容，针对于type1文字类型
+     */
     private String content;
 
     /**
@@ -56,16 +59,22 @@ public class AppMsgExtInfoObj implements Serializable {
     private String subtype;
 
     /**
-     * 简单摘要
+     * 摘要
      */
     private String digest;
 
     private String multi_app_msg_item_list;
 
+    /**
+     * 文章来源，针对于type49图文类型，（可以用来去重？）
+     */
     private String content_url;
 
     private String malicious_title_reason_id;
 
+    /**
+     * 音频文件id，针对于type34音频类型 （微信定义的一个id，每条文章唯一）？
+     */
     private String fileid;
 
     /**

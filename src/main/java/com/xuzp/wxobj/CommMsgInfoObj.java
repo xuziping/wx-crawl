@@ -19,12 +19,15 @@ public class CommMsgInfoObj implements Serializable{
      */
     private String datetime;
 
+    /**
+     * 公众号独一无二的id
+     */
     private String fakeid;
 
     private String id;
 
     /**
-     * 49:图文信息
+     * 49:图文，1:文字，3:图片，34:音频，62:视频
      */
     private String type;
 

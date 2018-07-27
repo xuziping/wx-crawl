@@ -10,7 +10,12 @@ import lombok.Getter;
 @Getter
 public enum CommMsgTypeEnum {
 
-    TYPE_49("49", "图文信息");
+    ARTICLE_WITH_IMG("49", "图文"),
+    ARTICLE("1", "文字"),
+    IMAGE("3", "图片"),
+    AUDIO("34", "音频"),
+    VIDEO("62", "视频"),
+    ;
 
     private String code;
 
