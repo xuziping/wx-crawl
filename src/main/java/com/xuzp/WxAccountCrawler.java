@@ -34,7 +34,7 @@ public class WxAccountCrawler extends BreadthCrawler {
     public void visit(Page page, CrawlDatums next) {
         String account = page.meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT);
         try {
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
