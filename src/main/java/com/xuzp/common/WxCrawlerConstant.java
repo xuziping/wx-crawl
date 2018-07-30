@@ -26,7 +26,11 @@ public interface WxCrawlerConstant {
 
     interface CrawlMetaKey {
 
-        String ACCOUNT = "wx_account";
+        String ACCOUNT_NAME = "wx_account_name";
+        String ACCOUNT_ID = "wx_account_id";
+        String ARTICLE_TITLE = "wx_article_title";
+        String ARTICLE_PUBLISH_DATE = "wx_article_publish_date";
+        String ARTICLE_AUTHOR = "wx_article_author";
     }
 
     interface CrawlDatumType{
