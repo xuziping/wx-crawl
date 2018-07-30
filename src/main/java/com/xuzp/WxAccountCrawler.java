@@ -20,13 +20,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
 public class WxAccountCrawler extends BreadthCrawler {
-
-    protected BufferedWriter historyKeysWriter;
 
     public WxAccountCrawler(String crawlPath) throws Exception {
         super(crawlPath, false);
@@ -202,7 +203,7 @@ public class WxAccountCrawler extends BreadthCrawler {
 
     public static void main(String[] args) throws Exception {
         WxAccountCrawler crawler = new WxAccountCrawler("crawl_weixin");
-        crawler.addAccount("缘聚小许");
+        crawler.addAccount("雪球");
         crawler.setThreads(1);
         crawler.setResumable(false);
         crawler.start(10);
