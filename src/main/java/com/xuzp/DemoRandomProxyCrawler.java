@@ -31,7 +31,11 @@ public class DemoRandomProxyCrawler extends BreadthCrawler {
         public MyRequester() {
             proxies = new Proxys();
             // add a socks proxy
-            proxies.add("111.11.227.84", 8080);
+            proxies.add("115.236.174.163", 10000);
+//            proxies.add("211.136.127.125", 80);
+//            proxies.add("118.113.146.2", 8888);
+//            proxies.add("58.253.108.214", 80);
+//            proxies.add("220.249.185.178", 9797);
         }
 
         @Override

@@ -175,8 +175,21 @@ public class WxAccountCrawler extends BreadthCrawler {
                     IOUtils.write(im, new FileOutputStream(newPath));
                     imgElement.attr("data-src", newPath);
                 }
-                content = doc.toString();
             }
+
+            Elements mpvoiceElements = doc.select("mpvoice");
+            if (CollectionUtils.isNotEmpty(mpvoiceElements)) {
+                HttpClient http = HttpClientBuilder.create().build();
+                for(Element voiceElement: mpvoiceElements) {
+                    String voiceURL = WxCrawlerConstant.VOICE_URL + voiceElement.attr("voice_encode_fileid");
+                    byte[] im = ImageUtils.download(http, voiceURL);
+                    String newPath = getContentFile(title, RandomStringUtils.randomNumeric(7) + ".mp3");
+                    IOUtils.write(im, new FileOutputStream(newPath));
+                    voiceElement.append("<audio src=\"" + newPath + "\">您的浏览器不支持audio标签</audio>");
+                }
+            }
+
+            content = doc.toString();
 
             LOG.info("accountName: {}, accountId: {}, title: {}, author: {}, publishDate: {}, content: {}",
                     accountName, accountId, title, author, publishDate, content);
