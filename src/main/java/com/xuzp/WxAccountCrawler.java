@@ -113,6 +113,7 @@ public class WxAccountCrawler extends BreadthCrawler {
                         .meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT_NAME, accountName)
                         .meta(WxCrawlerConstant.CrawlMetaKey.ACCOUNT_ID, accountId)
                         .meta(WxCrawlerConstant.CrawlMetaKey.ARTICLE_TITLE, title)
+                        .meta(WxCrawlerConstant.CrawlMetaKey.ARTICLE_COVER, cover)
                         .meta(WxCrawlerConstant.CrawlMetaKey.ARTICLE_PUBLISH_DATE, publishDate)
                         .meta(WxCrawlerConstant.CrawlMetaKey.ARTICLE_AUTHOR, author));
             }
@@ -122,7 +123,8 @@ public class WxAccountCrawler extends BreadthCrawler {
     }
 
     protected File getArticleFolder(String articleName) throws IOException {
-        File file = new File("D:/wx_crawl", articleName);
+        File file = new File("D:/wx_crawl",
+                articleName.replaceAll("\\\\/:\\*\\?\\\"<>\\|", ""));
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -189,6 +191,9 @@ public class WxAccountCrawler extends BreadthCrawler {
                 }
             }
 
+
+
+
             content = doc.toString();
 
             LOG.info("accountName: {}, accountId: {}, title: {}, author: {}, publishDate: {}, content: {}",
@@ -216,7 +221,7 @@ public class WxAccountCrawler extends BreadthCrawler {
 
     public static void main(String[] args) throws Exception {
         WxAccountCrawler crawler = new WxAccountCrawler("crawl_weixin");
-        crawler.addAccount("雪球");
+        crawler.addAccount("徐的测试账号");
         crawler.setThreads(1);
         crawler.setResumable(false);
         crawler.start(10);

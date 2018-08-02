@@ -25,10 +25,11 @@ public interface WxCrawlerConstant {
     String VOICE_URL = "https://res.wx.qq.com/voice/getvoice?mediaid=";
 
     interface CrawlMetaKey {
-
         String ACCOUNT_NAME = "wx_account_name";
         String ACCOUNT_ID = "wx_account_id";
         String ARTICLE_TITLE = "wx_article_title";
+        String ARTICLE_COVER = "wx_article_cover";
+        String ARTICLE_DIGEST = "wx_article_digest";
         String ARTICLE_PUBLISH_DATE = "wx_article_publish_date";
         String ARTICLE_AUTHOR = "wx_article_author";
     }
@@ -51,13 +52,6 @@ public interface WxCrawlerConstant {
     }
 
     interface HTMLElementSelector{
-
-        /**
-         * 文章标题
-         */
-        String RICH_MEDIA_TITLE  = "h2.rich_media_title";
-
-        String PUBLISH_TIME = "em#publish_time";
 
         /**
          * 文章内容
