@@ -31,9 +31,9 @@ public class DemoRandomProxyCrawler extends BreadthCrawler {
         public MyRequester() {
             proxies = new Proxys();
             // add a socks proxy
-            proxies.add("115.236.174.163", 10000);
-//            proxies.add("211.136.127.125", 80);
-//            proxies.add("118.113.146.2", 8888);
+            proxies.add("116.62.194.248", 3128);
+            proxies.add("113.200.56.13", 8010);
+            proxies.add("218.60.8.99", 3129);
 //            proxies.add("58.253.108.214", 80);
 //            proxies.add("220.249.185.178", 9797);
         }
@@ -41,15 +41,11 @@ public class DemoRandomProxyCrawler extends BreadthCrawler {
         @Override
         public OkHttpClient.Builder createOkHttpClientBuilder() {
             return super.createOkHttpClientBuilder()
-                    // 设置一个代理选择器
                     .proxySelector(new ProxySelector() {
                         @Override
                         public List<Proxy> select(URI uri) {
-                            // 随机选择1个代理
                             Proxy randomProxy = proxies.nextRandom();
-                            // 返回值类型需要是List
                             List<Proxy> randomProxies = new ArrayList<Proxy>();
-                            //如果随机到null，即不需要代理，返回空的List即可
                             if(randomProxy != null) {
                                 randomProxies.add(randomProxy);
                             }
@@ -67,13 +63,10 @@ public class DemoRandomProxyCrawler extends BreadthCrawler {
 
     public DemoRandomProxyCrawler(String crawlPath) {
         super(crawlPath, true);
-
-        // 设置请求插件
         setRequester(new MyRequester());
 
-        // 爬取github about下面的网页
-        addSeed("https://github.com/about");
-        addRegex("https://github.com/about/.*");
+        addSeed("https://www.baidu.com/");
+        addRegex("https://www.baidu.com/.*");
 
     }
 
@@ -84,6 +77,6 @@ public class DemoRandomProxyCrawler extends BreadthCrawler {
 
     public static void main(String[] args) throws Exception {
         DemoRandomProxyCrawler crawler = new DemoRandomProxyCrawler("crawl");
-        crawler.start(2);
+        crawler.start(5);
     }
 }
