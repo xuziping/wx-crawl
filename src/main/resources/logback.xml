@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="GBK"?>
+<!-- 只需配置好 log.dir 和 projectname 属性-->
+<configuration debug="false">
+	<property name="log.dir" value="D:/tmp" />
+	<property name="projectname" value="wx-crawl" />
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.out</target>
+		<encoder charset="UTF-8">
+			<pattern>%d [%thread] %-5p [%c] [%F:%L] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="infoAppender"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.dir}/logs/${projectname}.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/logs/${projectname}-%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%d [%thread] %-5p [%c] [%F:%L] [trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="errorAppender"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.dir}/logs/${projectname}_error.log</file>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/logs/${projectname}_error-%d{yyyy-MM-dd}.log.gz
+			</fileNamePattern>
+		</rollingPolicy>
+		<encoder charset="UTF-8">
+			<pattern>%d [%thread] %-5p [%c] [%F:%L] [trace=%X{X-Trace-Id:-},span=%X{X-Span-Id:-},parent=%X{X-Parent-Id:-},name=%X{X-Span-Name:-},app=%X{appname:-},begintime=%X{begintime:-},endtime=%X{fin-X1-time:-}] - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.apache">
+		<level value="INFO" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="infoAppender" />
+	</logger>
+
+	<logger name="org.springframework">
+		<level value="INFO" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="infoAppender" />
+	</logger>
+	<logger name="com.xuzp">
+		<level value="INFO" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="infoAppender" />
+	</logger>
+
+	<logger name="com.netflix">
+		<level value="INFO" />
+		<appender-ref ref="errorAppender" />
+		<appender-ref ref="infoAppender" />
+	</logger>
+	<root>
+		<level value="WARN" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

@@ -14,6 +14,8 @@ import java.io.InputStream;
 
 
 /**
+ * 下载图片工具，如果使用OSS转储就不需要使用该类
+ *
  * @author za-xuzhiping
  * @Date 2018/7/26
  * @Time 14:36

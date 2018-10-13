@@ -1,0 +1,31 @@
+server:
+  port: 11111
+spring:
+  application:
+    name: wx-crawl
+  threadPool:
+    corePoolSize: 20
+    maxPoolSize: 30
+    queueCapacity: 300
+    keepAliveSeconds: 300
+
+#Crawler config
+crawler:
+  weixin:
+    # 待爬取的微信公众号，支持爬取多个公众号，以;分隔
+    accounts: 雪球;缘聚小许
+    # outputPath 生成文章內容html文件
+    outputPath: D:/article_output
+    # 爬取访问一次后休眠时间，毫秒单位，为避免搜狗和微信封杀，建议设置至少3000以上
+    sleepTime: 5000
+    # 是否打开断点续爬，通过redis避免重复爬取。但是打开后就无法更新旧文章了
+    resumable: false
+    # 代理使用策略： none | 222.182.56.50:8118,124.235.208.252:443 | abuyun
+    proxyPolicy: none
+    # 文章已存在是否更新
+    updateArticle: true
+  proxy:
+    # abuyun账号
+    abuyunAccount: xxxx
+    # abuyun密码
+    abuyunPassword: xxxxx

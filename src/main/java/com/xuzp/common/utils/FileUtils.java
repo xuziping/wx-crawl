@@ -3,6 +3,8 @@ package com.xuzp.common.utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author za-xuzhiping
@@ -11,74 +13,52 @@ import java.io.*;
  */
 public class FileUtils {
 
-    public static String normalizeFileName(String filename){
+    private static final String EMOJI_PATTERN = "[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\u2600-\u27ff]";
+
+    private static final Pattern pattern = Pattern.compile(EMOJI_PATTERN);
+
+    public static boolean hasEmoji(String content) {
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 过滤表情符号。MySQL如果没有额外设置，无法保存表情符号
+     * @param str
+     * @return
+     */
+    public static String replaceEmoji(String str) {
+        if (!hasEmoji(str)) {
+            return str;
+        } else {
+            str = str.replaceAll(EMOJI_PATTERN, "");
+            return str;
+        }
+    }
+
+    /**
+     * 去除文件名中的非法字符
+     * @param filename
+     * @return
+     */
+    public static String normalize(String filename){
         if (StringUtils.isNotEmpty(filename)) {
             return filename.replaceAll("[\\s\\\\/:\\*\\?\\\"<>\\|]", "");
         }
         return null;
     }
 
-    public static String readFile(String path) {
-        File f = new File(path);
-        if(!f.exists()) {
-            return null;
-        } else {
-            FileReader fileReader = null;
-            BufferedReader br = null;
-            StringBuilder buffer = new StringBuilder("");
-
-            try {
-                fileReader = new FileReader(f);
-                br = new BufferedReader(fileReader);
-
-                String str;
-                while((str = br.readLine()) != null) {
-                    buffer.append(str);
-                }
-            } catch (Exception var18) {
-                var18.printStackTrace();
-            } finally {
-                if(br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException var17) {
-                        var17.printStackTrace();
-                    }
-                }
-
-                if(fileReader != null) {
-                    try {
-                        fileReader.close();
-                    } catch (IOException var16) {
-                        var16.printStackTrace();
-                    }
-                }
-
-            }
-
-            return buffer.toString();
+    public static File getOutputAccountPath(String outputPath, String account){
+        File folder = new File(outputPath);
+        if (!folder.exists()) {
+            folder.mkdirs();
         }
+        return folder;
     }
 
-    public static void writerFile(String path, String content) {
-        try {
-            FileWriter writer = new FileWriter(path, true);
-            writer.write(content);
-            writer.close();
-        } catch (IOException var3) {
-            var3.printStackTrace();
-        }
-
-    }
-
-    public static boolean delFile(String path) {
-        File file = new File(path);
-        return file.exists() && file.isFile()?file.delete():true;
-    }
-
-    public static String loadInput(InputStream input) {
-        return loadInput(input, "UTF-8");
-    }
 
     public static String loadInput(InputStream input, String charsetName) {
         if(input != null) {
@@ -127,4 +107,7 @@ public class FileUtils {
         }
     }
 
+    public static String loadInput(InputStream input) {
+        return loadInput(input, "UTF-8");
+    }
 }

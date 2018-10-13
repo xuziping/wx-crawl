@@ -1,4 +1,4 @@
-package com.xuzp.wxobj;
+package com.xuzp.crawler.weixin.obj;
 
 import lombok.Data;
 
