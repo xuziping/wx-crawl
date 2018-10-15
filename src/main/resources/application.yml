@@ -3,11 +3,6 @@ server:
 spring:
   application:
     name: wx-crawl
-  threadPool:
-    corePoolSize: 20
-    maxPoolSize: 30
-    queueCapacity: 300
-    keepAliveSeconds: 300
 
 #Crawler config
 crawler:
