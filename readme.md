@@ -31,7 +31,7 @@
 
 ![](https://i.imgur.com/yGGwO85.png)
 
-其中 /parseWxArticleDetail 和 /parseWxArticleList 接口是内部
+其中 `/parseWxArticleList` 和 `/parseWxArticleDetail` 接口是内部测试使用，解析fiddler从微信客户端抓取的文章列表json以及文章详情json。由于目前搜狗微信仅收录微信“订阅号”不收录“服务号”，因此对于服务号类型的公众号需要额外处理。另外，目前搜狗微信不收录文章“阅读次数”和“点赞次数”，因此也需要通过抓包的方式获取。
 
 ## 配置 ##
 
