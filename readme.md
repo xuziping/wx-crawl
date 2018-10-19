@@ -1,6 +1,6 @@
 ## 项目介绍 ##
 
-本项目是一个基于Java的微信公众号文章爬虫，使用Web Collector开源爬虫框架和SpringBoot实现，通过搜狗平台获取可以使用多种代理策略对指定公众号文章进行定时爬取，也可以通过访问浏览器URL手动触发爬取。
+本项目是一个基于Java的微信公众号文章爬虫，使用 Web Collector 开源爬虫框架和 Spring Boot 实现，通过搜狗平台获取可以使用多种代理策略对指定公众号文章进行定时爬取，也可以通过访问浏览器URL手动触发爬取。
 
 你可以基于本项目进行二次开发，配置Redis避免反复爬取，也可以通过实现OSS进行静态资源转储，以及实现文章保存接口来对爬取的内容入库。
 
@@ -17,6 +17,17 @@
 - 支持Swagger接口文档
 
 ## 开始使用 ##
+
+1. maven install
+
+2. 调整配置文件 `application.yml` ，具体参数请参见 **配置** 
+
+3. 启动项目 `WxCrawlerApplication`
+
+4. 打开浏览器访问 `http://localhost:11111/wxCrawler?proxyPolicy=none` 触发爬虫任务
+
+5. 爬完后文件在 `crawler.weixin.outputPath` 指定路径下生成，以 `公众号名_文章名.html` 的命名方式存档
+
 
 
 ## API列表 ##
@@ -60,3 +71,15 @@
     	abuyunAccount: xxxx
     	# 阿布云密码
     	abuyunPassword: xxxxx
+
+## 二次开发 & 扩展 ##
+
+- 入库实现
+
+- Redis扩展
+
+- OSS扩展
+
+- 调整自动爬取时间
+
+- 对爬取服务号文章的支持
