@@ -168,4 +168,4 @@
 
 		/parseWxArticleDetail: 解析获取抓包获取的文章详情json，后于 parseWxArticleList 接口执行。
 
-	后续会通过扩展分析fiddler的抓包数据，实现自动化，请等待后续版本的更新。
+	后续会通过扩展分析fiddler的抓包数据，实现自动化，请等待后续版本的更新：）
