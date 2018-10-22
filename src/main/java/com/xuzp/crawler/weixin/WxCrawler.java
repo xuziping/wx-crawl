@@ -239,7 +239,8 @@ public class WxCrawler extends RamCrawler {
      * @return
      */
     private CrawlDatum parseArticleSummary(ArticleTransferVO articleTransferVO){
-        String key = articleTransferVO.getAccountId().trim() + "###" + articleTransferVO.getTitle().trim();
+        String key = articleTransferVO.getAccountId().trim() + "###" + articleTransferVO.getTitle().trim()
+                + "###" + articleTransferVO.getPublishDate().trim();
         if (hasCrawled(key)) {
             log.info("Article has crawled, skip, accountName：{}，article：{}", articleTransferVO.getAccountName(),
                     articleTransferVO.getTitle());
@@ -276,7 +277,7 @@ public class WxCrawler extends RamCrawler {
             return;
         }
 
-        String key = accountId.trim() + "###" + title.trim();
+        String key = accountId.trim() + "###" + title.trim() + "###" + publishDate.trim();
         if (hasCrawled(key)) {
             log.info("This article has crawled, skip, accountName：{}，article：{}", accountName, title);
             return;
@@ -297,7 +298,10 @@ public class WxCrawler extends RamCrawler {
                             .attr(WxCrawlerConstant.BackupArticle.DIGEST, digest)
                             .attr(WxCrawlerConstant.BackupArticle.ACCOUNT_ID, accountId)
                             .attr(WxCrawlerConstant.BackupArticle.ACCOUNT_NAME, accountName)
-                            .attr(WxCrawlerConstant.BackupArticle.PUBLISH_DATE, publishDate);
+                            .attr(WxCrawlerConstant.BackupArticle.PUBLISH_DATE, publishDate)
+                            .attr(WxCrawlerConstant.BackupArticle.ARTICLE_TITLE, title)
+                            .attr(WxCrawlerConstant.BackupArticle.ARTICLE_TYPE, articleTransferVOResultBase.getValue().getArticleType());
+
                     org.apache.commons.io.FileUtils.writeStringToFile(new File(FileUtils.getOutputAccountPath(outputPath, accountName),
                                     FileUtils.normalize(accountName + "_" + title + ".html")),
                             FileUtils.replaceEmoji(targetDoc.outerHtml()), "UTF-8");

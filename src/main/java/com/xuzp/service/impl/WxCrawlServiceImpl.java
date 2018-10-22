@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.xuzp.common.ResultBase;
 import com.xuzp.common.WxCrawlerConstant;
+import com.xuzp.common.enums.ArticleTypeEnum;
 import com.xuzp.common.utils.DateTimeUtils;
 import com.xuzp.common.utils.FileUtils;
 import com.xuzp.common.utils.SampleHtmlLoader;
@@ -25,6 +26,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -88,11 +90,13 @@ public class WxCrawlServiceImpl implements IWxCrawlService {
         try {
             Document targetDoc = null;
             Element contentNode = sourceDoc.select(WxCrawlerConstant.HTMLElementSelector.RICH_MEDIA_CONTENT).first();
+            String articleType = null;
             if(contentNode != null) {
                 // 文章为普通图文类型
                 targetDoc = SampleHtmlLoader.getNormalArticleSampleDocument();
                 targetDoc.select(WxCrawlerConstant.HTMLElementSelector.RICH_MEDIA_CONTENT).first()
                         .replaceWith(contentNode.clone());
+                articleType = ArticleTypeEnum.NORMAL.getCode();
             } else {
                 // 文章为分享图片类型
                 contentNode = sourceDoc.select(WxCrawlerConstant.HTMLElementSelector.SHARE_MEDIA_CONTENT).first();
@@ -102,6 +106,7 @@ public class WxCrawlServiceImpl implements IWxCrawlService {
                 targetDoc = SampleHtmlLoader.getShareImgArticleSampleDocument();
                 targetDoc.select(WxCrawlerConstant.HTMLElementSelector.SHARE_MEDIA_CONTENT).first()
                         .replaceWith(contentNode.clone());
+                articleType = ArticleTypeEnum.IMAGE_SHARE.getCode();
             }
 
             targetDoc.outputSettings().prettyPrint(false);
@@ -142,18 +147,30 @@ public class WxCrawlServiceImpl implements IWxCrawlService {
                     }
                 }
             }
-
-            String title = sourceDoc.select("h2#activity-name.rich_media_title").first() != null ?
-                    sourceDoc.select("h2#activity-name.rich_media_title").first().text() : sourceDoc.title();
+            String title = getArticleTitle(sourceDoc);
             ArticleTransferVO articleVo = new ArticleTransferVO();
             articleVo.setTitle(FileUtils.replaceEmoji(title));
             articleVo.setTargetDoc(targetDoc);
+            articleVo.setArticleType(articleType);
             articleVo.setContent(FileUtils.replaceEmoji(targetDoc.select("body").first().html().trim()));
             return ResultBase.success(articleVo);
         } catch(Exception e) {
             log.info("Failed to parse detail", e);
             return ResultBase.fail("Failed to parse detail");
         }
+    }
+
+    private String getArticleTitle(Document sourceDoc) {
+        String title = "";
+        if(sourceDoc.head() != null &&
+                StringUtils.isNotEmpty(sourceDoc.head().attr(WxCrawlerConstant.BackupArticle.ARTICLE_TITLE))) {
+            title = sourceDoc.head().attr(WxCrawlerConstant.BackupArticle.ARTICLE_TITLE);
+        } else if (sourceDoc.select(WxCrawlerConstant.HTMLElementSelector.TITLE).first() != null) {
+            title = sourceDoc.select(WxCrawlerConstant.HTMLElementSelector.TITLE).first().text();
+        } else {
+            title = sourceDoc.title();
+        }
+        return title;
     }
 
     @Override

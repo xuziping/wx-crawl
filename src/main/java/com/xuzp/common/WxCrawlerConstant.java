@@ -7,9 +7,6 @@ package com.xuzp.common;
  */
 public interface WxCrawlerConstant {
 
-    String SUCCESS = "100";
-    String FAIL = "000";
-
     String YES = "1";
     String NO = "0";
 
@@ -99,6 +96,10 @@ public interface WxCrawlerConstant {
          * 图片分享
          */
         String SHARE_MEDIA_CONTENT = "div.share_media";
+        /**
+         * 标题
+         */
+        String TITLE = "h2#activity-name.rich_media_title";
     }
 
     interface BackupArticle {
@@ -108,5 +109,7 @@ public interface WxCrawlerConstant {
         String ACCOUNT_ID = "accountId";
         String ACCOUNT_NAME = "accountName";
         String PUBLISH_DATE = "publishDate";
+        String ARTICLE_TYPE = "articleType";
+        String ARTICLE_TITLE = "articleTitle";
     }
 }

@@ -21,6 +21,8 @@ public class ArticleConvert {
         articleTransferVO.setAccountName(header.attr(WxCrawlerConstant.BackupArticle.ACCOUNT_NAME));
         articleTransferVO.setDigest(header.attr(WxCrawlerConstant.BackupArticle.DIGEST));
         articleTransferVO.setOssCover(header.attr(WxCrawlerConstant.BackupArticle.COVER));
+        articleTransferVO.setArticleType(header.attr(WxCrawlerConstant.BackupArticle.ARTICLE_TYPE));
+        articleTransferVO.setTitle(header.attr(WxCrawlerConstant.BackupArticle.ARTICLE_TITLE));
         return articleTransferVO;
     }
 
@@ -30,7 +32,9 @@ public class ArticleConvert {
                 .attr(WxCrawlerConstant.BackupArticle.DIGEST, getValue(article.getDigest()))
                 .attr(WxCrawlerConstant.BackupArticle.ACCOUNT_ID, article.getAccountId())
                 .attr(WxCrawlerConstant.BackupArticle.ACCOUNT_NAME, article.getAccountName())
-                .attr(WxCrawlerConstant.BackupArticle.PUBLISH_DATE, article.getPublishDate());
+                .attr(WxCrawlerConstant.BackupArticle.PUBLISH_DATE, article.getPublishDate())
+                .attr(WxCrawlerConstant.BackupArticle.ARTICLE_TYPE, article.getArticleType())
+                .attr(WxCrawlerConstant.BackupArticle.ARTICLE_TITLE, article.getTitle());
         return targetDoc;
     }
 

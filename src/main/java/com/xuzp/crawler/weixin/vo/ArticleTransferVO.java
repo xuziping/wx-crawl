@@ -66,4 +66,8 @@ public class ArticleTransferVO {
      */
     private Document targetDoc;
 
+    /**
+     * 文章类型: 图文; 图片分享
+     */
+    private String articleType;
 }
