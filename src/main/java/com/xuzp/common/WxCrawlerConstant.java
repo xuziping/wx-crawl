@@ -112,4 +112,6 @@ public interface WxCrawlerConstant {
         String ARTICLE_TYPE = "articleType";
         String ARTICLE_TITLE = "articleTitle";
     }
+
+    String SUCCESS = "success";
 }
